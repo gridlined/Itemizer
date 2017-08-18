@@ -201,7 +201,11 @@ class Receipt(models.Model):
     def when(self):
         when = "%s" % self.date
         if self.time:
-            when = "%s %s" % (when, self.time)
+            when = "%s %s:%s%s" % (
+                when,
+                self.time.strftime("%I").lstrip("0"),
+                ("%i" % self.time.minute).rjust(2, "0"),
+                self.time.strftime("%p").lower())
         return when
 
     def __str__(self):
