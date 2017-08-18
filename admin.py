@@ -36,6 +36,7 @@ class ReceiptAdmin(admin.ModelAdmin):
         TaxChargeTabularAdmin,
         GratuityTabularAdmin,
         ]
+    date_hierarchy = "date"
     list_display = ("when", "supplier", "subtotal_usd", "tax_usd", "discount_usd", "tip_usd", "total_usd")
     list_display_links = ("when", "supplier")
     list_filter = ("date", "supplier")
