@@ -1,10 +1,10 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import url
 
-from mizer import views
+from . import views
 
 
-urlpatterns = patterns('',
-    url(r'^mizer/$', views.DashboardView.as_view(), name='mizer_home'),
-    url(r'^mizer/year$', views.YearListView.as_view(), name='mizer_year'),
-    url(r'^mizer/year/(?P<year>\d+)$', views.YearListView.as_view(), name='mizer_year'),
-)
+urlpatterns = [
+    url(r'^year/(?P<year>\d+)', views.YearListView.as_view(), name='mizer_year'),
+    url(r'^year', views.YearListView.as_view(), name='mizer_year'),
+    url(r'^', views.DashboardView.as_view(), name='mizer_home'),
+]

@@ -1,10 +1,8 @@
 from datetime import date
-from math import ceil, floor
 from os import path
 from re import sub
 
 from django.db import models
-from fileinput import filename
 
 
 class utils():
@@ -80,7 +78,6 @@ class utils():
         supplier = utils.clean_dirname(receipt.supplier)
         representation = "%i_%s" % (receipt.pk, supplier)
         return utils.build_image_path(filename, "receipt", year, month, day, representation)
-        
 
 
 class Tax(models.Model):
@@ -89,7 +86,7 @@ class Tax(models.Model):
     class Meta:
         verbose_name_plural = "taxes"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -102,7 +99,7 @@ class Supplier(models.Model):
     phone = models.CharField(max_length=50, null=True, blank=True)
     website = models.URLField(null=True, blank=True)
     
-    def __unicode__(self):
+    def __str__(self):
         repr = self.name
         if (self.city):
             repr = "%s (%s)" % (self.name, self.city)
@@ -112,7 +109,7 @@ class Supplier(models.Model):
 class ProductType(models.Model):
     name = models.CharField(max_length=100)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -122,13 +119,13 @@ class Product(models.Model):
                               null=True, blank=True)
     types = models.ManyToManyField("ProductType")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
 class Receipt(models.Model):
     supplier = models.ForeignKey("Supplier")
-    date = models.DateField(null=False, blank=False, default=date.today())
+    date = models.DateField(null=False, blank=False, default=date.today)
     time = models.TimeField(null=True, blank=True)
     image = models.ImageField(upload_to=utils.receipt_image_path,
                               null=True, blank=True)
@@ -207,7 +204,7 @@ class Receipt(models.Model):
             when = "%s %s" % (when, self.time)
         return when
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s - %s - %s" % (self.when, self.supplier, self.total_usd())
 
 
@@ -229,7 +226,7 @@ class Item(models.Model):
         return utils.to_usd(self.cost)
     cost_usd.short_description = "Cost (USD)"
 
-    def __unicode__(self):
+    def __str__(self):
         return "%d of %s for %s" % (self.quantity, self.product.name, self.cost_usd())
 
 
@@ -251,7 +248,7 @@ class Fee(models.Model):
         return utils.to_usd(self.cost)
     cost_usd.short_description = "Cost (USD)"
 
-    def __unicode__(self):
+    def __str__(self):
         return "%d of %s for %s" % (self.quantity, self.name, self.cost_usd())
 
 
@@ -264,7 +261,7 @@ class Discount(models.Model):
         return utils.to_usd(self.amount)
     amount_usd.short_description = "Amount (USD)"
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s for %s" % (self.name, self.amount_usd())
 
 
@@ -295,7 +292,7 @@ class TaxCharge(models.Model):
         return "%2.3f%%" % self.percentage()
     percentage_str.short_description = "Tax"
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s (%s)" % (self.tax.name, self.percentage_str())
 
 
@@ -311,7 +308,7 @@ class Gratuity(models.Model):
         return utils.to_usd(self.amount)
     amount_usd.short_description = "Amount (USD)"
 
-    def __unicode__(self):
+    def __str__(self):
         repr = "%s" % self.amount_usd()
         if self.to:
             repr = "%s for %s" % (self.amount_usd(), self.to)

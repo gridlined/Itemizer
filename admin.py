@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from models import Supplier, Tax, ProductType, Product, Item, Fee, Discount, TaxCharge, Gratuity, Receipt
+from .models import Supplier, Tax, ProductType, Product, Item, Fee, Discount, TaxCharge, Gratuity, Receipt
 
 
 class ItemTabularAdmin(admin.TabularInline):
