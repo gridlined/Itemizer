@@ -57,7 +57,7 @@ class YearListView(generic.ListView):
 
 
 class DashboardView(generic.TemplateView):
-    template_name = 'mizer/home.html';
+    template_name = 'mizer/home.html'
 
     def get_context_data(self, **kwargs):
         context = super(DashboardView, self).get_context_data(**kwargs)
