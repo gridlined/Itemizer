@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Supplier, Tax, ProductType, Product, Item, Fee, Discount, TaxCharge, Gratuity, Receipt
+from .models import Supplier, Tax, ProductType, Product, Item, Fee, Discount, TaxCharge, Gratuity, PaymentMethodType, PaymentMethod, Payment, Receipt
 
 
 class ItemTabularAdmin(admin.TabularInline):
@@ -28,6 +28,11 @@ class GratuityTabularAdmin(admin.TabularInline):
     extra = 0
 
 
+class PaymentTabularAdmin(admin.TabularInline):
+    model = Payment
+    extra = 0
+
+
 class ReceiptAdmin(admin.ModelAdmin):
     inlines = [
         ItemTabularAdmin,
@@ -35,9 +40,10 @@ class ReceiptAdmin(admin.ModelAdmin):
         DiscountTabularAdmin,
         TaxChargeTabularAdmin,
         GratuityTabularAdmin,
+        PaymentTabularAdmin,
         ]
     date_hierarchy = "date"
-    list_display = ("when", "supplier", "subtotal_usd", "tax_usd", "discount_usd", "tip_usd", "total_usd")
+    list_display = ("when", "supplier", "subtotal_usd", "tax_usd", "discount_usd", "tip_usd", "total_usd", "status")
     list_display_links = ("when", "supplier")
     list_filter = ("date", "supplier")
 
@@ -46,4 +52,6 @@ admin.site.register(Supplier)
 admin.site.register(Tax)
 admin.site.register(ProductType)
 admin.site.register(Product)
+admin.site.register(PaymentMethodType)
+admin.site.register(PaymentMethod)
 admin.site.register(Receipt, ReceiptAdmin)

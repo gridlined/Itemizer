@@ -126,6 +126,38 @@ class Product(models.Model):
         return self.name
 
 
+class PaymentMethodType(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class PaymentMethod(models.Model):
+    bank = models.CharField(max_length=100)
+    last4 = models.CharField("Last 4", max_length=4, blank=True, null=True)
+    type = models.ForeignKey("PaymentMethodType")
+
+    def __str__(self):
+        number = ""
+        type = ""
+        if self.last4:
+            number = " x%s" % self.last4
+        if self.bank != self.type:
+            type = " (%s)" % self.type
+        return "%s%s%s" % (self.bank, number, type)
+
+
+class Payment(models.Model):
+    receipt = models.ForeignKey("Receipt", related_name="payments")
+    payment_method = models.ForeignKey("PaymentMethod")
+    amount = models.DecimalField(
+        default=1,
+        max_digits=8,
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.01'))])  # up to 999999.99
+
+
 class Receipt(models.Model):
     supplier = models.ForeignKey("Supplier")
     date = models.DateField(null=False, blank=False, default=date.today)
@@ -211,8 +243,21 @@ class Receipt(models.Model):
                 self.time.strftime("%p").lower())
         return when
 
+    def status(self):
+        status = ""
+        if (self.payments.count() > 0):
+            paid = self.payments.all().aggregate(total=models.Sum(models.F('amount')))
+            total = paid["total"]
+            if total < self.total:
+                status = "Underpaid"
+            elif total > self.total:
+                status = "Overpaid"
+            else:
+                status = "Paid"
+        return status
+
     def __str__(self):
-        return "%s - %s - %s" % (self.when, self.supplier, self.total_usd())
+        return "%s - %s - %s (%s)" % (self.when, self.supplier, self.total_usd(), self.status())
 
     class Meta:
         ordering = ('-date', '-time')
