@@ -207,6 +207,9 @@ class Receipt(models.Model):
     def __str__(self):
         return "%s - %s - %s" % (self.when, self.supplier, self.total_usd())
 
+    class Meta:
+        ordering = ('-date', '-time')
+
 
 class Item(models.Model):
     product = models.ForeignKey("Product", related_name="purchases")
