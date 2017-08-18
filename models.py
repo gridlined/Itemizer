@@ -1,8 +1,11 @@
 from datetime import date
+from decimal import Decimal
+from math import ceil
 from os import path
 from re import sub
 
 from django.db import models
+from django.core.validators import MinValueValidator
 
 
 class utils():
@@ -218,8 +221,12 @@ class Receipt(models.Model):
 class Item(models.Model):
     product = models.ForeignKey("Product", related_name="purchases")
     receipt = models.ForeignKey("Receipt", related_name="items")
-    quantity = models.PositiveIntegerField(default=1)
-    unit_price = models.DecimalField(max_digits=8, decimal_places=2) # up to 999999.99
+    quantity = models.DecimalField(
+        default=1,
+        max_digits=8,
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.01'))])  # up to 999999.99
+    unit_price = models.DecimalField(max_digits=8, decimal_places=2)  # up to 999999.99
 
     def unit_price_usd(self):
         return utils.to_usd(self.unit_price)
@@ -227,14 +234,17 @@ class Item(models.Model):
 
     @property
     def cost(self):
-        return self.unit_price * self.quantity
+        hundred = Decimal(100)
+        cost = self.unit_price * self.quantity
+        rounded = round(cost, 2)
+        return rounded
 
     def cost_usd(self):
         return utils.to_usd(self.cost)
     cost_usd.short_description = "Cost (USD)"
 
     def __str__(self):
-        return "%d of %s for %s" % (self.quantity, self.product.name, self.cost_usd())
+        return "%.2f of %s for %s" % (self.quantity, self.product.name, self.cost_usd())
 
 
 class Fee(models.Model):
