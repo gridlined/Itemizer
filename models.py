@@ -169,8 +169,7 @@ class Payment(models.Model):
     amount = models.DecimalField(
         default=1,
         max_digits=8,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal('0.01'))])  # up to 999999.99
+        decimal_places=2)  # up to 999999.99
 
 
 class Receipt(models.Model):
@@ -267,8 +266,11 @@ class Receipt(models.Model):
                 status = "Underpaid"
             elif total > self.total:
                 status = "Overpaid"
+            elif total < 0:
+                status = "Refunded"
             else:
                 status = "Paid"
+
         return status
 
     def __str__(self):
@@ -284,8 +286,7 @@ class Item(models.Model):
     quantity = models.DecimalField(
         default=1,
         max_digits=8,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal('0.01'))])  # up to 999999.99
+        decimal_places=2)  # up to 999999.99
     unit_price = models.DecimalField(max_digits=8, decimal_places=2)  # up to 999999.99
 
     def unit_price_usd(self):
