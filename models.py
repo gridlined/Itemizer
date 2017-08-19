@@ -108,12 +108,18 @@ class Supplier(models.Model):
             repr = "%s (%s)" % (self.name, self.city)
         return repr
 
+    class Meta:
+        ordering = ("name", "state", "city",)
+
 
 class ProductType(models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        ordering = ("name",)
 
 
 class Product(models.Model):
@@ -125,12 +131,18 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ("name",)
+
 
 class PaymentMethodType(models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        ordering = ("name",)
 
 
 class PaymentMethod(models.Model):
@@ -146,6 +158,9 @@ class PaymentMethod(models.Model):
         if self.bank != self.type:
             type = " (%s)" % self.type
         return "%s%s%s" % (self.bank, number, type)
+
+    class Meta:
+        ordering = ("bank", "type", "last4",)
 
 
 class Payment(models.Model):
@@ -260,7 +275,7 @@ class Receipt(models.Model):
         return "%s - %s - %s (%s)" % (self.when, self.supplier, self.total_usd(), self.status())
 
     class Meta:
-        ordering = ('-date', '-time')
+        ordering = ('-date', '-time',)
 
 
 class Item(models.Model):
