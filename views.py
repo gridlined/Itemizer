@@ -70,9 +70,9 @@ class BaseAutocompleteView(autocomplete.Select2QuerySetView):
     def get_queryset_by_model(self, model):
         results = model.objects.none()
         if self.request.user.is_authenticated():
-            results = model.objects.order_by("name").all()
+            results = model.objects.all()
             if self.q:
-                results = results.filter(name__istartswith=self.q)
+                results = results.filter(name__icontains=self.q)
         return results
 
 
