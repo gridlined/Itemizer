@@ -1,15 +1,15 @@
 from datetime import date
 
-from django.shortcuts import render_to_response
-from django.template.context import RequestContext
 from django.views import generic
 
-from mizer.models import Receipt
+from .models import Supplier, Product, Receipt
+from dal import autocomplete
 
 
 base_context = {
     'section_title': 'Mizer',
 }
+
 
 class YearListView(generic.ListView):
     template_name = 'mizer/year.html'
@@ -64,3 +64,23 @@ class DashboardView(generic.TemplateView):
         context.update(base_context)
         context['page_title'] = 'Dashboard'
         return context
+
+
+class BaseAutocompleteView(autocomplete.Select2QuerySetView):
+    def get_queryset_by_model(self, model):
+        results = model.objects.none()
+        if self.request.user.is_authenticated():
+            results = model.objects.order_by("name").all()
+            if self.q:
+                results = results.filter(name__istartswith=self.q)
+        return results
+
+
+class SupplierAutocompleteView(BaseAutocompleteView):
+    def get_queryset(self):
+        return self.get_queryset_by_model(Supplier)
+
+
+class ProductAutocompleteView(BaseAutocompleteView):
+    def get_queryset(self):
+        return self.get_queryset_by_model(Product)

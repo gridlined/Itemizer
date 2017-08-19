@@ -1,9 +1,32 @@
+from django import forms
 from django.contrib import admin
 
-from .models import Supplier, Tax, ProductType, Product, Item, Fee, Discount, TaxCharge, Gratuity, PaymentMethodType, PaymentMethod, Payment, Receipt
+from dal import autocomplete
+
+from .models import (Supplier, Tax, ProductType, Product, Item, Fee, Discount, TaxCharge, Gratuity, PaymentMethodType,
+                     PaymentMethod, Payment, Receipt)
+
+
+class ItemAdminForm(forms.ModelForm):
+    class Meta:
+        model = Item
+        fields = ("__all__")
+        widgets = {
+            "product": autocomplete.ModelSelect2(url="mizer_product_search")
+        }
+
+
+class ReceiptAdminForm(forms.ModelForm):
+    class Meta:
+        model = Receipt
+        fields = ("__all__")
+        widgets = {
+            "supplier": autocomplete.ModelSelect2(url="mizer_supplier_search")
+        }
 
 
 class ItemTabularAdmin(admin.TabularInline):
+    form = ItemAdminForm
     model = Item
     extra = 1
 
@@ -34,6 +57,7 @@ class PaymentTabularAdmin(admin.TabularInline):
 
 
 class ReceiptAdmin(admin.ModelAdmin):
+    form = ReceiptAdminForm
     inlines = [
         ItemTabularAdmin,
         FeeTabularAdmin,
