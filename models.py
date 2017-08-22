@@ -288,8 +288,8 @@ class Item(models.Model):
     receipt = models.ForeignKey("Receipt", related_name="items")
     quantity = models.DecimalField(
         default=1,
-        max_digits=8,
-        decimal_places=2)  # up to 999999.99
+        max_digits=9,
+        decimal_places=3)  # up to 999999.999
     unit_price = models.DecimalField(max_digits=8, decimal_places=2)  # up to 999999.99
 
     def unit_price_usd(self):
