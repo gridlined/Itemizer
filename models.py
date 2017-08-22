@@ -101,11 +101,14 @@ class Supplier(models.Model):
     postal_code = models.CharField(max_length=50, null=True, blank=True)
     phone = models.CharField(max_length=50, null=True, blank=True)
     website = models.URLField(null=True, blank=True)
-    
+
+    def locality(self):
+        return "%s, %s" % (self.city, self.state)
+
     def __str__(self):
         repr = self.name
         if (self.city):
-            repr = "%s (%s)" % (self.name, self.city)
+            repr = "%s (%s)" % (self.name, self.locality())
         return repr
 
     class Meta:

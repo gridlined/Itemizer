@@ -69,7 +69,7 @@ class ReceiptAdmin(admin.ModelAdmin):
     date_hierarchy = "date"
     list_display = ("when", "supplier", "subtotal_usd", "tax_usd", "discount_usd", "tip_usd", "total_usd", "status")
     list_display_links = ("when", "supplier")
-    list_filter = ("date", "supplier")
+    list_filter = ("date", "supplier__state", "supplier__city", "supplier__name",)
 
 
 admin.site.register(Supplier)
