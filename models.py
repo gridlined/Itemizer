@@ -127,6 +127,7 @@ class ProductType(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
     image = models.ImageField(upload_to=utils.product_image_path,
                               null=True, blank=True)
     types = models.ManyToManyField("ProductType")
