@@ -128,7 +128,7 @@ class ProductType(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
-    code = models.CharField("UPC / SKU / Product Code", max_length=25, null=True, blank=True)
+    code = models.CharField("UPC / SKU / Product Code", max_length=25, null=True, blank=True, unique=True)
     image = models.ImageField(upload_to=utils.product_image_path, null=True, blank=True)
     types = models.ManyToManyField("ProductType")
 
