@@ -12,7 +12,8 @@ class ItemAdminForm(forms.ModelForm):
         model = Item
         fields = ("__all__")
         widgets = {
-            "product": autocomplete.ModelSelect2(url="mizer_product_search")
+            "product": autocomplete.ModelSelect2(url="mizer_product_search",
+                                                 attrs={'data-html': True})
         }
 
 
@@ -21,7 +22,8 @@ class ReceiptAdminForm(forms.ModelForm):
         model = Receipt
         fields = ("__all__")
         widgets = {
-            "supplier": autocomplete.ModelSelect2(url="mizer_supplier_search")
+            "supplier": autocomplete.ModelSelect2(url="mizer_supplier_search",
+                                                  attrs={'data-html': True})
         }
 
 

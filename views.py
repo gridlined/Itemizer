@@ -77,10 +77,22 @@ class BaseAutocompleteView(autocomplete.Select2QuerySetView):
 
 
 class SupplierAutocompleteView(BaseAutocompleteView):
+    def get_result_label(self, item):
+        return """
+        <strong>%s</strong><br>%s
+        """ % (item.name, item.locality())
+
     def get_queryset(self):
         return self.get_queryset_by_model(Supplier)
 
 
 class ProductAutocompleteView(BaseAutocompleteView):
+    def get_result_label(self, item):
+        return "%s<strong>%s</strong><br>%s%s" % (
+            item.image_html(),
+            item.name,
+            "%s<br>" % item.code if item.code else "",
+            ", ".join([product_type.name for product_type in item.types.all()]))
+
     def get_queryset(self):
         return self.get_queryset_by_model(Product)

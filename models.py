@@ -8,6 +8,9 @@ from django.db import models
 from django.core.validators import MinValueValidator
 
 
+BLANK_IMAGE = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+
+
 class utils():
     @staticmethod
     def to_usd(num):
@@ -68,9 +71,8 @@ class utils():
         """/path/to/media/product/12345/YYYY-mm-dd_productname"""
         product_name = utils.clean_dirname(product.name)
         datestamp = utils.datestamp()
-        id = str(product.pk)
         representation = "%s_%s" % (datestamp, product_name)
-        return utils.build_image_path(filename, "product", id, representation)
+        return utils.build_image_path(filename, "product", str(product.id), representation)
 
     @staticmethod
     def receipt_image_path(receipt, filename):
@@ -133,9 +135,12 @@ class Product(models.Model):
     types = models.ManyToManyField("ProductType")
 
     def __str__(self):
-        return "%s%s (%s)" % ("[%s] " % self.code if self.code else "",
-                                 self.name,
-                                 ", ".join([product_type.name for product_type in self.types.all()]))
+        return "%s (%s)" % (self.name,
+                                             ", ".join([product_type.name for product_type in self.types.all()]))
+
+    def image_html(self):
+        return '<img src="%s" class="thumbnail" alt="">' % (
+            self.image.url if self.image and self.image.url else BLANK_IMAGE)
 
     class Meta:
         ordering = ("name",)
@@ -311,7 +316,7 @@ class Item(models.Model):
     cost_usd.short_description = "Cost (USD)"
 
     def __str__(self):
-        return "%.2f of %s for %s" % (self.quantity, self.product.name, self.cost_usd())
+        return "%.3f of %s for %s" % (self.quantity, self.product.name, self.cost_usd())
 
 
 class Fee(models.Model):
